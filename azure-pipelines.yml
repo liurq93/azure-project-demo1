@@ -20,3 +20,43 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
+- task: AzureCLI@1
+
+  inputs:
+    scriptLocation: 'scriptPath'
+    scriptPath: 
+
+- task: AzureCLI@1
+  inputs:
+    scriptLocation: 'scriptPath'
+    scriptPath: 
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+    verbose: true
+    quiet: true
+  
+- task: AzureMysqlDeployment@1
+  inputs:
+    DatabaseName: 'aci-db-test'
+    SqlUsername: 'admin'
+    SqlPassword: 'ciAdmin'
+    TaskNameSelector: 'SqlTaskFile'
+    SqlFile: 'echo test'
+    SqlAdditionalArguments: 'test'
+    IpDetectionMethod: 'AutoDetect'
+
+- task: AzureMonitorAlerts@0
+  inputs:
+    ResourceType: 'Microsoft.Insights/components'
+    ResourceName: 
+    AlertRules: 'dsadasdasd'
+
+- task: GoTool@0
+  inputs:
+    version: '1.*'
